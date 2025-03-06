@@ -1,56 +1,83 @@
-// Este archivo se encarga de los callback que tiene cada función de los endpoints
-const { response, reques } = require('express');
+// Este archivo se encarga de los callbacks que tiene cada función de los endpoints
+const { response, request } = require('express');
+const Usuario = require('../models/usuario');
+const bcryptjs = require("bcryptjs");
 
-const usuariosGet = (req = reques, res = response) => {
-    // Extracción de params
-    // req.query: Es un objeto, el cual puedo desestructurar
-    // page=3, esto quiere decir que en caso de que no se envie page, su valor por defecto sera 3
+// Controlador para manejar solicitudes GET
+const usuariosGet = (req = request, res = response) => {
+    // Extracción de parámetros de la URL (query params)
+    // req.query es un objeto que podemos desestructurar
+    // Ejemplo: si no se envía 'page', su valor por defecto será 3
     const { q, nombre = 'Not name', apikey, page = 3, limit } = req.query;
+
     res.json({
-        msg: 'get api- controlador',
+        msg: 'GET API - Controlador',
         q,
         nombre,
-        apikey
+        apikey,
+        page,
+        limit
     });
 };
 
-const usuariosPost = (req, res = response) => {
-    // Información, tal cual la persona la esta enviando
-    // Body: es un objeto js
-    const body = req.body;
-    const { nombre, edad } = req.body
+// Controlador para manejar solicitudes POST
+const usuariosPost = async (req, res = response) => {
+   
+    // Extraer el cuerpo de la solicitud (datos enviados por el usuario)
+    const { nombre, correo, password, rol } = req.body;
+    // Verificar el correo existente en la base de datos
+    const existeEmail = await Usuario.findOne({ correo });
+    if (existeEmail) {
+        return res.status(400).json({
+            msg: 'El correo, ya esta registrado'
+        })
+
+    }
+
+    // Crear una nueva instancia de Usuario con los datos recibidos
+    // Si se envían propiedades que no están en el modelo de Mongoose, serán ignoradas
+    const usuario = new Usuario({ nombre, correo, password, rol });
+    // * Encriptación la contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync(password, salt);
+    await usuario.save();
 
     res.json({
-        msg: 'post api- controlador',
-        nombre,
-        edad
+        msg: 'POST API - Controlador',
+        usuario
     });
 };
+
+// Controlador para manejar solicitudes PUT
 const usuariosPut = (req, res = response) => {
+    // Extraer el ID de los parámetros de la URL
     const { id } = req.params;
+
     res.json({
-        msg: 'put API- controlador',
+        msg: 'PUT API - Controlador',
         id
     });
 };
 
+// Controlador para manejar solicitudes DELETE
 const usuariosDelete = (req, res = response) => {
     res.json({
-        msg: 'delete API- controlador'
+        msg: 'DELETE API - Controlador'
     });
 };
+
+// Controlador para manejar solicitudes PATCH
 const usuariosPatch = (req, res = response) => {
     res.json({
-        msg: 'patch API- controlador'
+        msg: 'PATCH API - Controlador'
     });
 };
 
-
+// Exportamos los controladores para ser usados en las rutas
 module.exports = {
     usuariosGet,
     usuariosPost,
     usuariosPut,
     usuariosDelete,
-    usuariosPatch,
-
-}
+    usuariosPatch
+};

@@ -1,5 +1,7 @@
+// Configurar y arrancar el servidor express
 const express = require('express')
-const cors = require('cors')
+const cors = require('cors');
+const { dbConnection } = require('../database/config');
 
 class Server {
     constructor() {
@@ -8,9 +10,15 @@ class Server {
         // *Estas son las rutas que yo tengo
         this.usuariosPath = '/api/usuarios';
         // * Funciones que se ejecutan a la mitad de un proceso de petición HTTP
-        // Rutas de mi aplicación
+        // *Conectar a la base de datos
+        this.conectarDB();
         this.middlewares();
+        // Rutas de mi aplicación
         this.routes();
+    }
+    async conectarDB() {
+        await dbConnection();
+
     }
     middlewares() {
         // Palabra clave para saber que es un middleware;
