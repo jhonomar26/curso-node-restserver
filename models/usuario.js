@@ -1,12 +1,4 @@
-// {
-// nombre: 'asd',
-// correo: 'asdasd@asdasd.com',
-// password: '123871829372891',
-// img: '1237128371298379182',
-// rol: '1237128371298379182',
-// estado: false,
-// google: false
-// }
+
 // *model: Nos permite manejar grandes volumenes de datos
 // Permite interactuar con la base de datos
 const { Schema, model } = require('mongoose');
@@ -34,7 +26,7 @@ const UsuarioSchema = Schema({
         type: String,
         required: true,
         // Define los valores permitidos
-        enum: ['ADMIN_ROLE', 'USER_ROLE']
+        enum: ['ADMIN_ROLE', 'USER_ROLE', 'VENTAS_ROLE']
     },
     estado: {
         type: Boolean,
@@ -48,5 +40,10 @@ const UsuarioSchema = Schema({
 
 
 });
+// * Quitar la contraseña y version
+UsuarioSchema.methods.toJSON = function () {
+    const { __v, password, ...usuario } = this.toObject();
+    return usuario;
+};
 
 module.exports = model('Usuario', UsuarioSchema)
