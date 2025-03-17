@@ -2,7 +2,7 @@
 const { response, request } = require('express');
 const Usuario = require('../models/usuario');
 const bcryptjs = require("bcryptjs");
-const chalk = require('chalk');
+import chalk from 'chalk';
 const { body } = require('express-validator');
 
 
