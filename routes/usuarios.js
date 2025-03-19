@@ -1,5 +1,6 @@
 // ! Se definen las rutas y conecta los controladores
 const { Router } = require('express');
+const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const Role = require('../models/role');
 const { esRoleValido, emailExiste, existeUsuarioPorId } = require('../helpers/db-validators');
@@ -11,7 +12,6 @@ const {
     usuariosDelete,
     usuariosPatch
 } = require('../controllers/usuarios');
-const { check } = require('express-validator');
 
 // Creamos una nueva instancia de Router
 const router = Router();

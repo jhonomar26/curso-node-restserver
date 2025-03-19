@@ -2,13 +2,14 @@
 const express = require('express')
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
-
+// *Configuracion y arranque del servidor
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
         // *Estas son las rutas que yo tengo
         this.usuariosPath = '/api/usuarios';
+        this.authPath = '/api/auth';
         // * Funciones que se ejecutan a la mitad de un proceso de petición HTTP
         // *Conectar a la base de datos
         this.conectarDB();
@@ -35,6 +36,7 @@ class Server {
     }
     routes() {
         // Ahora la ruta es localhost:8080/api/usuarios
+        this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usuariosPath, require('../routes/usuarios'));
     }
     listen() {
