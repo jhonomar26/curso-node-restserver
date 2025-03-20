@@ -2,11 +2,7 @@
 const { response, request } = require('express');
 const Usuario = require('../models/usuario');
 const bcryptjs = require("bcryptjs");
-// (async () => {
-//     const chalk = (await import('chalk')).default;
-//     console.log(chalk.green('Esto funciona en CommonJS 🎉'));
-// })();
-const chalk = require('chalk');
+
 
 
 const { body } = require('express-validator');
