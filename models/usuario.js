@@ -9,9 +9,14 @@ const UsuarioSchema = new Schema({
     estado: { type: Boolean, default: true },
     google: { type: Boolean, default: false },
 });
-
+// Metodo que se ejecuta automaticamente cuando se covierte en un objeto Json, por ejemplo al enviar datos en una apiRest
 UsuarioSchema.methods.toJSON = function () {
-    const { __v, password, ...usuario } = this.toObject();
+    // Extraigo los elementos que quiero que no se muestren, v, password...
+    // this.toObject: convierte el documento a un objeto javascript estandar
+    //* ...usuario: el resto de las propiedades del objeto
+    const { __v, password, _id, ...usuario } = this.toObject();
+    usuario.uid = _id; // Renombrar _id a uid
+
     return usuario;
 };
 

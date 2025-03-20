@@ -2,10 +2,13 @@
 const { response, request } = require('express');
 const Usuario = require('../models/usuario');
 const bcryptjs = require("bcryptjs");
-(async () => {
-    const chalk = (await import('chalk')).default;
-    console.log(chalk.green('Esto funciona en CommonJS 🎉'));
-})();
+// (async () => {
+//     const chalk = (await import('chalk')).default;
+//     console.log(chalk.green('Esto funciona en CommonJS 🎉'));
+// })();
+const chalk = require('chalk');
+
+
 const { body } = require('express-validator');
 
 
@@ -62,8 +65,6 @@ const usuariosPut = async (req, res = response) => {
     // ! ...resto: objeto literal
     const { _id, password, google, correo, ...resto } = req.body;
     // TODO validar contra base de datos
-    // Hacemos cambio de la contraseña 
-    console.log(chalk.default.blue(`RESTO= ${resto}`)); // ¡Usa `.default.blue`!
     if (password) {
         // * Encriptación la contraseña
         const salt = bcryptjs.genSaltSync();
@@ -77,16 +78,19 @@ const usuariosPut = async (req, res = response) => {
 };
 
 // Controlador para manejar solicitudes DELETE
-const usuariosDelete = async (req, res = response) => {
+const usuariosDelete = async (req = request, res = response) => {
     const { id } = req.params;
     //* Fisicamente lo eliminamos
     // En caso de que lo encuentre regresa su id, en caso de que no lo encuentre su valor del id sera null
     // const usuario = await Usuario.findByIdAndDelete(id);
     // Retorno el usuario que ha sido eliminado
     const usuario = await Usuario.findByIdAndUpdate(id, { estado: false })
-    res.json(
-        usuario
-    );
+    const usuarioAutenticado = req.usuario
+
+    res.json({
+        usuario,
+        usuarioAutenticado
+    });
 };
 
 // Controlador para manejar solicitudes PATCH

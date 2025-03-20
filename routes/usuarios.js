@@ -1,8 +1,15 @@
 // ! Se definen las rutas y conecta los controladores
+// Definimos las rutas y las asociamos con sus respectivos controladores
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { validarCampos } = require('../middlewares/validar-campos');
-const Role = require('../models/role');
+
+// const { validarCampos } = require('../middlewares/validar-campos');
+// const { validarJWT } = require('../middlewares/validar-jwt');
+// const { esAdminRole, tieneRole } = require('../middlewares/validar-roles');
+const {
+    validarCampos, validarJWT, esAdminRole, tieneRole
+} = require('../middlewares')
+
 const { esRoleValido, emailExiste, existeUsuarioPorId } = require('../helpers/db-validators');
 // Importamos los controladores que manejarán las solicitudes HTTP
 const {
@@ -15,8 +22,6 @@ const {
 
 // Creamos una nueva instancia de Router
 const router = Router();
-
-// Definimos las rutas y las asociamos con sus respectivos controladores
 
 // Ruta para manejar solicitudes GET en '/usuarios'
 router.get('/', usuariosGet);
@@ -48,6 +53,9 @@ router.post('/', [
 // Ruta para manejar solicitudes DELETE en '/usuarios'
 router.delete('/:id',
     [
+        validarJWT,
+        esAdminRole,
+        tieneRole('ADMIN_ROLE', 'USER_ROLE'),
         check('id', 'No es un ID válido en mongoDB').isMongoId(),
         check('id').custom(existeUsuarioPorId),
         validarCampos
