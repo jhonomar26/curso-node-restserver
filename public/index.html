@@ -4,12 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso denegado</title>
+    <title>Google Sign-in</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <h1>Acceso denegado</h1>
+    <div class="container">
+        <h1>Google Sign-in</h1>
+        <hr>
+        <div id="g_id_onload" data-client_id="54315818152-dq0a9betagb067p2pmosu7vbd4accaoc.apps.googleusercontent.com"
+            data-auto_prompt="false" data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+            data-shape="rectangular" data-logo_alignment="left">
+        </div>
+        <button id="google_signout">Sign out</button>
+    </div>
 
+    <script>
+        function handleCredentialResponse(response) {
+            console.log('Google ID Token:', response.credential);
+            
+            const body = { id_token: response.credential };
+            
+            fetch('http://localhost:8081/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(resp => resp.json())
+                .then(resp => {
+                    console.log('Respuesta del servidor:', resp);
+                    if (resp.usuario && resp.usuario.correo) {
+                        localStorage.setItem('email', resp.usuario.correo);
+                    } else {
+                        console.error("No se recibió un correo válido del servidor.");
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+        }
+
+        document.getElementById('google_signout').addEventListener('click', () => {
+            console.log("Intentando cerrar sesión...");
+
+            if (!window.google || !google.accounts || !google.accounts.id) {
+                console.error("La API de Google aún no está lista.");
+                return;
+            }
+
+            google.accounts.id.disableAutoSelect();
+            console.log("disableAutoSelect() ejecutado.");
+
+            const email = localStorage.getItem('email');
+            if (!email) {
+                console.warn("No hay correo guardado en localStorage.");
+                return;
+            }
+
+            console.log(`Revocando acceso para: ${email}`);
+            google.accounts.id.revoke(email, (done) => {
+                console.log("Revoke ejecutado, cerrando sesión.");
+                localStorage.clear();
+                location.reload();
+            });
+        });
+    </script>
 </body>
 
 </html>
