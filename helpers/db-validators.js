@@ -1,6 +1,8 @@
 // ! Funciones que me serviran junto con el custom, para validaciones
 const Role = require('../models/role');
 const Usuario = require('../models/usuario');
+const Categoria = require("../models/categoria");
+const { request } = require('express');
 
 const esRoleValido = async (rol = '') => {
     const existeRol = await Role.findOne({ rol });
@@ -21,8 +23,29 @@ const existeUsuarioPorId = async (id) => {
     if (!existeUsuario) {
         throw new Error(`El id ${id} no está registrado en la BD`);
     }
-    
+
+
+}
+const existeCategoria = async (id) => {
+    const existeCategoria = await Categoria.findOne({ _id: id, estado: true });
+    if (!existeCategoria) {
+        throw new Error(`El id ${id} no se encuentra en la BD`);
+    }
 
 }
 
-module.exports = { esRoleValido, emailExiste, existeUsuarioPorId }
+const existeNombreCategoria = async (nombre) => {
+    const nombreMayuscula = nombre.toUpperCase();
+    const existeCategoria = await Categoria.findOne({ nombre: nombreMayuscula, estado: true });
+    if (existeCategoria) {
+        throw new Error(`El nombre ${nombre}, ya se encuentra en la BD`);
+    }
+}
+
+module.exports = {
+    esRoleValido,
+    emailExiste,
+    existeUsuarioPorId,
+    existeCategoria,
+    existeNombreCategoria,
+}
