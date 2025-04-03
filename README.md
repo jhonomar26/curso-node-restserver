@@ -23,13 +23,7 @@ Asegúrate de tener instalado en tu sistema:
 ```bash
 git clone https://github.com/jhonomar26/curso-node-restserver.git
 cd curso-node-restserver
-¡Claro! A continuación te proporciono un ejemplo de un archivo `README.md` con el contenido que solicitaste. Puedes copiarlo y pegarlo en tu archivo `README.md`:
-
-```markdown
-# Nombre del Proyecto
-
-Descripción breve del proyecto.
-
+```
 ## 📦 Instalar dependencias
 
 Ejecuta el siguiente comando para instalar las dependencias necesarias:
@@ -61,8 +55,4 @@ O si prefieres utilizar Nodemon:
 ```bash
 npm run dev
 ```
-```
 
-### Notas:
-- Asegúrate de cambiar "Nombre del Proyecto" y "Descripción breve del proyecto" por el nombre y la descripción actual del proyecto que estás documentando.
-- También puedes personalizar más el `README.md` según las necesidades de tu proyecto, añadiendo secciones como "Uso", "Contribución", "Licencia", etc.
