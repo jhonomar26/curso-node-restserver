@@ -9,22 +9,15 @@ const obtenerCategorias = async (req = request, res = response) => {
     // Ejecutar ambas consultas en paralelo
     const [total, categorias] = await Promise.all([
         Categoria.countDocuments(query),
-        Categoria.find(query).skip(Number(desde)).limit(Number(limite))
+        Categoria.find(query)
+            .populate('usuario', 'nombre')
+            .skip(Number(desde))
+            .limit(Number(limite))
     ]);
-
-    // Poblar los usuarios de cada categoría
-    // await Promise.all, se utiliza dado que map no devuleve una promesa por si solo 
-    const categoriasPopuladas = await Promise.all(
-        // arrray devuelve un nuevo array con las categoria 
-        categorias.map(async (categoria) => {
-            // populate se aplica sobre consultas que devuelvan documentos en mongoose
-            return await Categoria.findById(categoria._id).populate("usuario", "nombre correo rol");
-        })
-    );
 
     res.json({
         total,
-        categorias: categoriasPopuladas
+        categorias
     });
 };
 
@@ -33,7 +26,7 @@ const obtenerCategorias = async (req = request, res = response) => {
 // ObtenerCategoria  -populate {}
 const obtenerCategoria = async (req = request, res = response) => {
     const { id } = req.params;
-    const categoria = await Categoria.findById(id).populate("usuario", "nombre correo rol")
+    const categoria = await Categoria.findById(id).populate("usuario", "nombre")
 
     res.json({
         categoria
@@ -64,20 +57,22 @@ const crearCategoria = async (req, res = response) => {
 
 }
 // actualizar la categoria atraves del nombre
-const actualizarCategoria = async (req, res) => {
+const actualizarCategoria = async (req = request, res = response) => {
     try {
-        const { nombreHeader } = req.params; // Nombre actual de la categoría
-        const { nombre: nuevoNombre } = req.body; // Nuevo nombre desde el body
+        const { estado, usuario, _id, ...data } = req.body;
+        const nombreActual = req.params.nombreHeader.toUpperCase();
+        console.log(req.params.nombreHeader.toUpperCase())
 
-        // Convertir nombres a mayúsculas para comparación consistente
-        const nombreActual = nombreHeader.toUpperCase();
-        const nombreNuevo = nuevoNombre.toUpperCase();
+        if (data.nombre) {
+            data.nombre = data.nombre.toUpperCase();
+        }
 
-        // Buscar y actualizar la categoría
+        data.usuario = req.usuario._id;
+
         const categoria = await Categoria.findOneAndUpdate(
             { nombre: nombreActual },
-            { nombre: nombreNuevo },
-            { new: true } // Retorna la categoría actualizada
+            data,
+            { new: true }
         );
 
         if (!categoria) {
@@ -96,10 +91,10 @@ const eliminarCategoria = async (req = request, res = response) => {
     // Controlador para manejar solicitudes DELETE
     const { id } = req.params;
     // Retorno a la categoria que ha sido eliminado
-    const categoria = await Categoria.findByIdAndUpdate(id, { estado: false })
+    const categoriaBorrada = await Categoria.findByIdAndUpdate(id, { estado: false }, { new: true })
 
     res.json({
-        categoria
+        categoriaBorrada
     });
 
 }

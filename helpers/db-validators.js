@@ -26,15 +26,18 @@ const existeUsuarioPorId = async (id) => {
 
 
 }
-const existeCategoria = async (id) => {
+// Validadores de categoria: 
+// Valida que la categoria exista y no este eliminada por id
+const existeCategoriaId = async (id) => {
     const existeCategoria = await Categoria.findOne({ _id: id, estado: true });
     if (!existeCategoria) {
         throw new Error(`El id ${id} no se encuentra en la BD`);
     }
 
 }
+// Valida que la categoria exista y no este eliminada por Nombre
 
-const existeNombreCategoria = async (nombre) => {
+const existeCategoriaNombre = async (nombre) => {
     const nombreMayuscula = nombre.toUpperCase();
     const existeCategoria = await Categoria.findOne({ nombre: nombreMayuscula, estado: true });
     if (existeCategoria) {
@@ -46,6 +49,6 @@ module.exports = {
     esRoleValido,
     emailExiste,
     existeUsuarioPorId,
-    existeCategoria,
-    existeNombreCategoria,
+    existeCategoriaId,
+    existeCategoriaNombre,
 }
