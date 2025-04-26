@@ -61,7 +61,6 @@ const actualizarCategoria = async (req = request, res = response) => {
     try {
         const { estado, usuario, _id, ...data } = req.body;
         const nombreActual = req.params.nombreHeader.toUpperCase();
-        console.log(req.params.nombreHeader.toUpperCase())
 
         if (data.nombre) {
             data.nombre = data.nombre.toUpperCase();
@@ -91,10 +90,10 @@ const eliminarCategoria = async (req = request, res = response) => {
     // Controlador para manejar solicitudes DELETE
     const { id } = req.params;
     // Retorno a la categoria que ha sido eliminado
-    const categoriaBorrada = await Categoria.findByIdAndUpdate(id, { estado: false }, { new: true })
+    const categoria = await Categoria.findByIdAndUpdate(id, { estado: false })
 
     res.json({
-        categoriaBorrada
+        categoria
     });
 
 }
@@ -108,5 +107,6 @@ module.exports = {
     obtenerCategorias,
     obtenerCategoria,
     actualizarCategoria,
-    eliminarCategoria
+    eliminarCategoria,
+    
 }

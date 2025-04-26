@@ -13,7 +13,7 @@ const validarJWT = async (req = req, res = response, next) => {
     try {
         // !Este es el uid, del usuario al cual le pertenece ese token
         const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
-        console.log(uid)
+
         // Leer el usuario que corresponde al uid
         const usuario = await Usuario.findById(uid);
         if (!usuario) {

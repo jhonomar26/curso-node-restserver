@@ -19,7 +19,6 @@ const esAdminRole = (req = request, res = response, next) => {
 }
 // ! ... :operador rest
 const tieneRole = (...roles) => {
-    console.log(roles);
     return (req, res = response, next) => {
         if (!req.usuario) {
             return res.status(500).json({

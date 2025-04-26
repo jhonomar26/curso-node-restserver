@@ -3,6 +3,7 @@ const Role = require('../models/role');
 const Usuario = require('../models/usuario');
 const Categoria = require("../models/categoria");
 const { request } = require('express');
+const { Producto } = require('../models');
 
 const esRoleValido = async (rol = '') => {
     const existeRol = await Role.findOne({ rol });
@@ -45,10 +46,41 @@ const existeCategoriaNombre = async (nombre) => {
     }
 }
 
+
+
+// !Productos
+
+const existeProductoNombre = async (nombre) => {
+    const nombreMayuscula = nombre.toUpperCase();
+    const existeProducto = await Producto.findOne({ nombre: nombreMayuscula, estado: true });
+    if (!existeProducto) {
+        throw new Error(`El nombre ${nombre},   no se encuentra en la BD`);
+    }
+}
+const noExisteProductoNombre = async (nombre) => {
+    const nombreMayuscula = nombre.toUpperCase();
+    const existeProducto = await Producto.findOne({ nombre: nombreMayuscula, estado: true });
+    if (existeProducto) {
+        throw new Error(`El nombre ${nombre}, ya se encuentra en la BD`);
+    }
+}
+
+const existeProductoId = async (id) => {
+    const existeProducto = await Producto.findOne({ _id: id, estado: true });
+    if (!existeProducto) {
+        throw new Error(`El nombre ${id}, no se encuentra en la BD`);
+    }
+}
+
+
 module.exports = {
     esRoleValido,
     emailExiste,
     existeUsuarioPorId,
     existeCategoriaId,
     existeCategoriaNombre,
+    existeProductoNombre,
+    existeProductoId,
+    noExisteProductoNombre
+
 }

@@ -9,9 +9,11 @@ class Server {
         this.port = process.env.PORT;
         // *Estas son las rutas que yo tengo
         this.paths = {
-            usuarios: '/api/usuarios',
-            categorias: '/api/categorias',
             auth: '/api/auth',
+            buscar: '/api/buscar',
+            categorias: '/api/categorias',
+            productos: '/api/productos',
+            usuarios: '/api/usuarios',
 
         }
         // * Funciones que se ejecutan a la mitad de un proceso de petición HTTP
@@ -40,8 +42,10 @@ class Server {
     }
     routes() {
         // Ahora la ruta es localhost:8080/api/usuarios
-        this.app.use(this.paths.categorias, require('../routes/categorias'));
         this.app.use(this.paths.auth, require('../routes/auth'));
+        this.app.use(this.paths.buscar, require('../routes/buscar'));
+        this.app.use(this.paths.categorias, require('../routes/categorias'));
+        this.app.use(this.paths.productos, require('../routes/productos'));
         this.app.use(this.paths.usuarios, require('../routes/usuarios'));
     }
     listen() {
