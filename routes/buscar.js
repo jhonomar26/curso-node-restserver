@@ -4,5 +4,5 @@ const { buscar } = require('../controllers/buscar')
 
 const router = Router()
 
-router.get('/:coleecion/:termino', buscar)
+router.get('/:coleccion/:termino', buscar)
 module.exports = router
